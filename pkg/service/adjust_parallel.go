@@ -1,14 +1,13 @@
 // imaging/adjust_parallel.go
-package imaging
+package service
 
 import (
 	"image"
-	"runtime"
 	"sync"
 )
 
-func ParallelAdjust(img image.Image, params AdjustParams) (image.Image, error) {
-	numThreads := runtime.NumCPU()
+func (is *ImageService) parallelAdjust(img image.Image, params AdjustParams) (image.Image, error) {
+	numThreads := is.maxGoroutines
 	bounds := img.Bounds()
 	width := bounds.Dx()
 	height := bounds.Dy()
@@ -29,7 +28,7 @@ func ParallelAdjust(img image.Image, params AdjustParams) (image.Image, error) {
 			}
 			subImg := imgRGBA.SubImage(image.Rect(0, startY, width, endY)).(*image.RGBA)
 
-			adjustedSubImg := Adjust(subImg, params).(*image.RGBA)
+			adjustedSubImg := is.adjust(subImg, params).(*image.RGBA)
 
 			blocks[i] = adjustedSubImg
 		}(i)

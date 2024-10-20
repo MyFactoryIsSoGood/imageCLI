@@ -1,5 +1,5 @@
 // imaging/adjust.go
-package imaging
+package service
 
 import (
 	"image"
@@ -18,8 +18,8 @@ type AdjustParams struct {
 	BlueShift  float64
 }
 
-// Adjust применяет коррекцию к изображению на основе заданных параметров.
-func Adjust(img image.Image, params AdjustParams) image.Image {
+// adjust применяет коррекцию к изображению на основе заданных параметров.
+func (is *ImageService) adjust(img image.Image, params AdjustParams) image.Image {
 	bounds := img.Bounds()
 	dst := image.NewRGBA(bounds)
 

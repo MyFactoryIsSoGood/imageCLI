@@ -3,6 +3,7 @@ package imagecli
 
 import (
 	"fmt"
+	"imageCLI/pkg/service"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -14,28 +15,26 @@ var (
 	noParallel bool
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "imagecli",
-	Short: "Инструмент для обработки изображений",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		if inputPath == "" || outputPath == "" {
-			return fmt.Errorf("необходимо указать параметры --input и --output (-i и -o)")
-		}
-		return nil
-	},
-}
+func Execute(service *service.ImageService) {
+	rootCmd := &cobra.Command{
+		Use:   "imagecli",
+		Short: "Инструмент для обработки изображений",
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if inputPath == "" || outputPath == "" {
+				return fmt.Errorf("необходимо указать параметры --input и --output (-i и -o)")
+			}
+			return nil
+		},
+	}
 
-func init() {
 	rootCmd.PersistentFlags().StringVarP(&inputPath, "input", "i", "", "Путь к входному файлу или директории")
 	rootCmd.PersistentFlags().StringVarP(&outputPath, "output", "o", "", "Путь к выходному файлу или директории")
 	rootCmd.PersistentFlags().BoolVar(&noParallel, "no-parallel", false, "Отключить параллельную обработку")
 
-	rootCmd.AddCommand(resizeCmd)
-	rootCmd.AddCommand(gblurCmd)
-	rootCmd.AddCommand(adjustCmd)
-}
+	rootCmd.AddCommand(NewResizeCmd(service))
+	rootCmd.AddCommand(NewGBlurCmd(service))
+	rootCmd.AddCommand(NewAdjustCmd(service))
 
-func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

@@ -1,18 +1,17 @@
 // imaging/blur_parallel.go
-package imaging
+package service
 
 import (
 	"image"
-	"runtime"
 	"sync"
 )
 
-func ParallelBlur(img image.Image, radius float64) (image.Image, error) {
+func (is *ImageService) parallelBlur(img image.Image, radius float64) (image.Image, error) {
 	if radius <= 0 {
 		return img, nil
 	}
 
-	numThreads := runtime.NumCPU()
+	numThreads := is.maxGoroutines
 	bounds := img.Bounds()
 	width := bounds.Dx()
 	height := bounds.Dy()
@@ -50,7 +49,7 @@ func ParallelBlur(img image.Image, radius float64) (image.Image, error) {
 			endY := blockHeights[i][1]
 			subImg := imgRGBA.SubImage(image.Rect(0, startY, width, endY)).(*image.RGBA)
 
-			blurredSubImg := Blur(subImg, radius).(*image.RGBA)
+			blurredSubImg := is.blur(subImg, radius).(*image.RGBA)
 
 			cropStartY := startY + kernelRadius
 			if i == 0 {

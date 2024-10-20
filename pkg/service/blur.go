@@ -1,5 +1,5 @@
 // imaging/blur.go
-package imaging
+package service
 
 import (
 	"image"
@@ -12,8 +12,8 @@ type BlurParams struct {
 	Radius float64
 }
 
-// Blur применяет гауссово размытие к изображению с заданным радиусом.
-func Blur(img image.Image, radius float64) image.Image {
+// blur применяет гауссово размытие к изображению с заданным радиусом.
+func (is *ImageService) blur(img image.Image, radius float64) image.Image {
 	if radius <= 0 {
 		return img
 	}

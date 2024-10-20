@@ -1,5 +1,5 @@
 // imaging/imaging.go
-package imaging
+package service
 
 import (
 	"image"
@@ -12,32 +12,32 @@ type Operations struct {
 	UseParallel bool
 }
 
-func Process(img image.Image, ops Operations) (image.Image, error) {
+func (is *ImageService) process(img image.Image, ops Operations) (image.Image, error) {
 	var err error
 
 	if ops.Resize != nil {
-		img = Resize(img, ops.Resize.Width, ops.Resize.Height)
+		img = is.resize(img, ops.Resize.Width, ops.Resize.Height)
 	}
 
 	if ops.Blur != nil {
 		if ops.UseParallel {
-			img, err = ParallelBlur(img, ops.Blur.Radius)
+			img, err = is.parallelBlur(img, ops.Blur.Radius)
 			if err != nil {
 				return nil, err
 			}
 		} else {
-			img = Blur(img, ops.Blur.Radius)
+			img = is.blur(img, ops.Blur.Radius)
 		}
 	}
 
 	if ops.Adjust != nil {
 		if ops.UseParallel {
-			img, err = ParallelAdjust(img, *ops.Adjust)
+			img, err = is.parallelAdjust(img, *ops.Adjust)
 			if err != nil {
 				return nil, err
 			}
 		} else {
-			img = Adjust(img, *ops.Adjust)
+			img = is.adjust(img, *ops.Adjust)
 		}
 	}
 

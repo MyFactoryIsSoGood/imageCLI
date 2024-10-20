@@ -1,5 +1,5 @@
 // imaging/parallel_utils.go
-package imaging
+package service
 
 import (
 	"image"

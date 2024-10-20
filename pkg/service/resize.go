@@ -1,5 +1,5 @@
 // imaging/resize.go
-package imaging
+package service
 
 import (
 	"image"
@@ -11,8 +11,8 @@ type ResizeParams struct {
 	Height int
 }
 
-// Resize resizes the image to the specified width and height.
-func Resize(img image.Image, width, height int) image.Image {
+// resize resizes the image to the specified width and height.
+func (is *ImageService) resize(img image.Image, width, height int) image.Image {
 	srcBounds := img.Bounds()
 	dst := image.NewRGBA(image.Rect(0, 0, width, height))
 

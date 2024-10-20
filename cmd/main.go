@@ -3,10 +3,14 @@ package main
 
 import (
 	"imageCLI/cmd/imagecli"
+	"imageCLI/pkg/service"
+	"runtime"
 )
 
 func main() {
-	imagecli.Execute()
+	imageService := service.NewImageService(runtime.NumCPU())
+
+	imagecli.Execute(imageService)
 }
 
 // Тест операций: чтобы не вызывать команды
@@ -43,10 +47,10 @@ func main() {
 //	// Apply blur
 //	fmt.Println("Applying blur...")
 //	blurOps := imaging.Operations{
-//		Blur:        &imaging.BlurParams{Radius: 5},
+//		blur:        &imaging.BlurParams{Radius: 5},
 //		UseParallel: true,
 //	}
-//	imgBlurred, err := imaging.Process(img[0].Img, blurOps)
+//	imgBlurred, err := imaging.process(img[0].Img, blurOps)
 //	if err != nil {
 //		fmt.Printf("Error applying blur: %v\n", err)
 //		os.Exit(1)
@@ -61,10 +65,10 @@ func main() {
 //	// Apply resize
 //	fmt.Println("Applying resize...")
 //	resizeOps := imaging.Operations{
-//		Resize:      &imaging.ResizeParams{Width: 600, Height: 600},
+//		resize:      &imaging.ResizeParams{Width: 600, Height: 600},
 //		UseParallel: true,
 //	}
-//	imgResized, err := imaging.Process(img[0].Img, resizeOps)
+//	imgResized, err := imaging.process(img[0].Img, resizeOps)
 //	if err != nil {
 //		fmt.Printf("Error applying resize: %v\n", err)
 //		os.Exit(1)
@@ -79,7 +83,7 @@ func main() {
 //	// Apply adjust
 //	fmt.Println("Applying adjust...")
 //	adjustOps := imaging.Operations{
-//		Adjust: &imaging.AdjustParams{
+//		adjust: &imaging.AdjustParams{
 //			Saturation: 0, // Increase saturation by 20%
 //			Contrast:   0, // Increase contrast by 10%
 //			Hue:        0, // Shift hue by 15 degrees
@@ -90,7 +94,7 @@ func main() {
 //		},
 //		UseParallel: true,
 //	}
-//	imgAdjusted, err := imaging.Process(img[0].Img, adjustOps)
+//	imgAdjusted, err := imaging.process(img[0].Img, adjustOps)
 //	if err != nil {
 //		fmt.Printf("Error applying adjust: %v\n", err)
 //		os.Exit(1)

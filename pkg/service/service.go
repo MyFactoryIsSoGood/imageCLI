@@ -2,12 +2,28 @@ package service
 
 import (
 	"image"
-	"imageCLI/pkg/imaging"
 	"imageCLI/pkg/loader"
+	"runtime"
 	"sync"
 )
 
-func ProcessImages(images []loader.ImageFile, operations imaging.Operations) ([]loader.ImageFile, error) {
+type ImageService struct {
+	maxGoroutines int
+}
+
+func NewImageService(maxGoroutines int) *ImageService {
+	if maxGoroutines <= 0 {
+		maxGoroutines = runtime.NumCPU()
+	}
+
+	iService := ImageService{
+		maxGoroutines: maxGoroutines,
+	}
+
+	return &iService
+}
+
+func (is *ImageService) ProcessImages(images []loader.ImageFile, operations Operations) ([]loader.ImageFile, error) {
 	var err error
 
 	if operations.UseParallel {
@@ -18,7 +34,7 @@ func ProcessImages(images []loader.ImageFile, operations imaging.Operations) ([]
 			wg.Add(1)
 			go func(i int, img image.Image) {
 				defer wg.Done()
-				processedImg, procErr := imaging.Process(img, operations)
+				processedImg, procErr := is.process(img, operations)
 				if procErr != nil {
 					select {
 					case errChan <- procErr:
@@ -39,7 +55,7 @@ func ProcessImages(images []loader.ImageFile, operations imaging.Operations) ([]
 		}
 	} else {
 		for i, img := range images {
-			processedImg, procErr := imaging.Process(img.Img, operations)
+			processedImg, procErr := is.process(img.Img, operations)
 			if procErr != nil {
 				return nil, procErr
 			}
