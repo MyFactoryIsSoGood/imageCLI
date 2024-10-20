@@ -11,6 +11,41 @@ import (
 	"strings"
 )
 
+func SaveImagesToDir(dir string, imgs []ImageFile) error {
+	fmt.Println(dir)
+	// Проверяем существование директории, если нет - создаем
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err := os.MkdirAll(dir, os.ModePerm)
+		if err != nil {
+			return fmt.Errorf("не удалось создать директорию '%s': %v", dir, err)
+		}
+	}
+
+	var errs []error
+
+	for i, img := range imgs {
+		fileName := img.Name // Здесь используем PNG формат по умолчанию
+		outputPath := filepath.Join(dir, fileName)
+
+		// Сохраняем изображение в файл
+		err := saveImageToFile(outputPath, img.Img)
+		if err != nil {
+			errs = append(errs, fmt.Errorf("ошибка при сохранении изображения %d в '%s': %v", i+1, outputPath, err))
+		}
+	}
+
+	if len(errs) > 0 {
+		// Объединяем все ошибки в одну
+		errorMessages := "Произошли следующие ошибки при сохранении изображений:\n"
+		for _, e := range errs {
+			errorMessages += e.Error() + "\n"
+		}
+		return fmt.Errorf(errorMessages)
+	}
+
+	return nil
+}
+
 func saveImageToFile(path string, img image.Image) error {
 	fmt.Println(path)
 	ext := strings.ToLower(filepath.Ext(path))

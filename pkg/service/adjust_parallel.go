@@ -1,4 +1,3 @@
-// imaging/adjust_parallel.go
 package service
 
 import (

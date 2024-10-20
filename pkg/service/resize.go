@@ -1,17 +1,16 @@
-// imaging/resize.go
 package service
 
 import (
 	"image"
 )
 
-// ResizeParams contains parameters for resizing.
+// ResizeParams - параметры изменения размера
 type ResizeParams struct {
 	Width  int
 	Height int
 }
 
-// resize resizes the image to the specified width and height.
+// resize изменяет размер изображения с помощью метода ближайшего соседа
 func (is *ImageService) resize(img image.Image, width, height int) image.Image {
 	srcBounds := img.Bounds()
 	dst := image.NewRGBA(image.Rect(0, 0, width, height))

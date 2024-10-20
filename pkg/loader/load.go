@@ -13,6 +13,32 @@ import (
 	"sync"
 )
 
+type ImageFile struct {
+	Name string
+	Img  image.Image
+}
+
+func LoadImages(path string, parallel bool) ([]ImageFile, error) {
+	var images []ImageFile
+
+	inputInfo, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+
+	if inputInfo.IsDir() {
+		images, err = loadImagesFromDirectory(path, parallel)
+	} else {
+		img, err := loadImageFromFile(path)
+		if err != nil {
+			return nil, err
+		}
+		images = append(images, img)
+	}
+
+	return images, nil
+}
+
 // LoadImageFromFile загружает изображение из файла.
 func loadImageFromFile(path string) (ImageFile, error) {
 	file, err := os.Open(path)
@@ -32,12 +58,12 @@ func loadImageFromFile(path string) (ImageFile, error) {
 		err = fmt.Errorf("неподдерживаемый формат файла: %s", ext)
 	}
 
-	image := ImageFile{
+	imageFile := ImageFile{
 		Name: filepath.Base(path),
 		Img:  img,
 	}
 
-	return image, err
+	return imageFile, err
 }
 
 // Возвращает срез загруженных ImageFile и ошибку, если таковая возникла.

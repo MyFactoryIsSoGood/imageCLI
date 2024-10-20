@@ -1,4 +1,3 @@
-// imaging/blur_parallel.go
 package service
 
 import (
@@ -6,6 +5,7 @@ import (
 	"sync"
 )
 
+// parallelBlur - разбиваем изображение на чанки и блюрим
 func (is *ImageService) parallelBlur(img image.Image, radius float64) (image.Image, error) {
 	if radius <= 0 {
 		return img, nil

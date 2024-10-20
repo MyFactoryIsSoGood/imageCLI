@@ -1,4 +1,3 @@
-// imaging/blur.go
 package service
 
 import (
@@ -92,14 +91,4 @@ func convolve(img image.Image, kernel []float64, horizontal bool) image.Image {
 	}
 
 	return dst
-}
-
-func clamp(value, min, max float64) float64 {
-	if value < min {
-		return min
-	}
-	if value > max {
-		return max
-	}
-	return value
 }
