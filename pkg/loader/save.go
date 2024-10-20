@@ -1,4 +1,3 @@
-// loader/save.go
 package loader
 
 import (
@@ -12,19 +11,37 @@ import (
 )
 
 func SaveImagesToDir(dir string, imgs []ImageFile) error {
-	fmt.Println(dir)
+	if len(imgs) == 0 {
+		return fmt.Errorf("нет изображений для сохранения")
+	}
+
+	// Проверяем, является ли путь директорией или файлом
+	isSingle := len(imgs) == 1
+	ext := ""
+	if isSingle {
+		ext = strings.ToLower(filepath.Ext(dir))
+	}
+
+	if isSingle && ext != "" {
+		// Путь предполагается как файл
+		return saveImageToFile(dir, imgs[0].Img)
+	}
+
+	// Путь предполагается как директория
 	// Проверяем существование директории, если нет - создаем
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err := os.MkdirAll(dir, os.ModePerm)
 		if err != nil {
 			return fmt.Errorf("не удалось создать директорию '%s': %v", dir, err)
 		}
+	} else if err != nil {
+		return fmt.Errorf("ошибка при проверке директории '%s': %v", dir, err)
 	}
 
 	var errs []error
 
 	for i, img := range imgs {
-		fileName := img.Name // Здесь используем PNG формат по умолчанию
+		fileName := img.Name
 		outputPath := filepath.Join(dir, fileName)
 
 		// Сохраняем изображение в файл
@@ -45,9 +62,7 @@ func SaveImagesToDir(dir string, imgs []ImageFile) error {
 
 	return nil
 }
-
 func saveImageToFile(path string, img image.Image) error {
-	fmt.Println(path)
 	ext := strings.ToLower(filepath.Ext(path))
 	dir := filepath.Dir(path)
 

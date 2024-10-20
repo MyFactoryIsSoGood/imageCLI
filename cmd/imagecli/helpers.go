@@ -1,4 +1,3 @@
-// cmd/imagecli/helpers.go
 package imagecli
 
 import (

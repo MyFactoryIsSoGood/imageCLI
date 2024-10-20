@@ -1,4 +1,3 @@
-// cmd/imagecli/root.go
 package imagecli
 
 import (

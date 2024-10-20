@@ -1,4 +1,3 @@
-// loader/load.go
 package loader
 
 import (

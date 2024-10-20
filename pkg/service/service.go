@@ -32,6 +32,7 @@ func NewImageService(maxGoroutines int) *ImageService {
 
 func (is *ImageService) ProcessImages(images []loader.ImageFile, operations Operations) ([]loader.ImageFile, error) {
 	var err error
+	isBatch := len(images) > is.maxGoroutines
 
 	if operations.UseParallel {
 		var wg sync.WaitGroup
@@ -41,7 +42,7 @@ func (is *ImageService) ProcessImages(images []loader.ImageFile, operations Oper
 			wg.Add(1)
 			go func(i int, img image.Image) {
 				defer wg.Done()
-				processedImg, procErr := is.process(img, operations)
+				processedImg, procErr := is.process(img, operations, isBatch)
 				if procErr != nil {
 					select {
 					case errChan <- procErr:
@@ -62,7 +63,7 @@ func (is *ImageService) ProcessImages(images []loader.ImageFile, operations Oper
 		}
 	} else {
 		for i, img := range images {
-			processedImg, procErr := is.process(img.Img, operations)
+			processedImg, procErr := is.process(img.Img, operations, isBatch)
 			if procErr != nil {
 				return nil, procErr
 			}
@@ -73,7 +74,7 @@ func (is *ImageService) ProcessImages(images []loader.ImageFile, operations Oper
 	return images, nil
 }
 
-func (is *ImageService) process(img image.Image, ops Operations) (image.Image, error) {
+func (is *ImageService) process(img image.Image, ops Operations, isBatch bool) (image.Image, error) {
 	var err error
 
 	if ops.Resize != nil {
@@ -81,7 +82,7 @@ func (is *ImageService) process(img image.Image, ops Operations) (image.Image, e
 	}
 
 	if ops.Blur != nil {
-		if ops.UseParallel {
+		if !isBatch && ops.UseParallel {
 			img, err = is.parallelBlur(img, ops.Blur.Radius)
 			if err != nil {
 				return nil, err
@@ -92,7 +93,7 @@ func (is *ImageService) process(img image.Image, ops Operations) (image.Image, e
 	}
 
 	if ops.Adjust != nil {
-		if ops.UseParallel {
+		if !isBatch && ops.UseParallel {
 			img, err = is.parallelAdjust(img, *ops.Adjust)
 			if err != nil {
 				return nil, err

@@ -1,4 +1,3 @@
-// cmd/imagecli/resize.go
 package imagecli
 
 import (

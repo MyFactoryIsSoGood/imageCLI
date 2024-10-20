@@ -33,7 +33,7 @@
 
 ---
 
-## Resize API
+## resize API
 
 Изменение размера изображения.
 
@@ -48,7 +48,7 @@ imagecli resize -s=200x200 --input=lenna.png --output=output.png
 
 ---
 
-## Gaussian Blur API
+## Gaussian blur API
 
 Применение гауссова размытия к изображению.
 
@@ -71,7 +71,7 @@ imagecli resize -s=200x200 --input=lenna.png --output=output.png
 
 ---
 
-## Adjust API
+## adjust API
 
 Настройка цветовых параметров изображения.
 

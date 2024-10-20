@@ -1,4 +1,3 @@
-// cmd/imagecli/adjust.go
 package imagecli
 
 import (
