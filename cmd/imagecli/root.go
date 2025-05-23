@@ -18,7 +18,20 @@ func Execute(service *service.ImageService) {
 	rootCmd := &cobra.Command{
 		Use:   "imagecli",
 		Short: "Инструмент для обработки изображений",
+		Long: `Инструмент для обработки изображений с поддержкой различных операций:
+- Изменение размера
+- Гауссово размытие
+- Настройка цветовых параметров
+
+Более подробная документация доступна на GitHub: https://github.com/yourusername/imageCLI 
+Для каждой команды доступен флаг --help, который выводит вспомогающую информацию.`,
+		CompletionOptions: cobra.CompletionOptions{
+			DisableDefaultCmd: true,
+		},
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if cmd.Name() == "help" {
+				return nil
+			}
 			if inputPath == "" || outputPath == "" {
 				return fmt.Errorf("необходимо указать параметры --input и --output (-i и -o)")
 			}
